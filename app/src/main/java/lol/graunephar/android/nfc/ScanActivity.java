@@ -15,8 +15,10 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -28,7 +30,7 @@ import lol.graunephar.android.nfc.models.TagContentMessage;
 import lol.graunephar.android.nfc.utilities.nfc.NFCReader;
 
 
-public class ScanActivity extends AppCompatActivity {
+public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
     private static final String TAG = ScanActivity.class.toString();
     Tag detectedTag;
@@ -37,6 +39,9 @@ public class ScanActivity extends AppCompatActivity {
     PendingIntent pendingIntent;
     private NFCReader mReader;
     private android.support.v4.app.FragmentManager mManager;
+    private long MESSAGE_SHOW_DELAY = 5000;
+    private MessageFragment mFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,12 +94,37 @@ public class ScanActivity extends AppCompatActivity {
 
         android.support.v4.app.FragmentTransaction transaction = mManager.beginTransaction();
 
-        MessageFragment fragment = new MessageFragment();
-        transaction.add(R.id.fragment_layout, fragment);
-        transaction.commit();
+        if(mFragment != null) closeMessage();
 
+        mFragment = new MessageFragment();
+        mFragment.setCloser(this);
+        transaction.add(R.id.fragment_layout, mFragment);
+        transaction.commit();
+        startAutoClose();
 
     }
+
+
+    @Override
+    public void closeMessage() {
+        Log.d(TAG, "CLosing fragment");
+        if (mManager == null) mManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = mManager.beginTransaction();
+        transaction.remove(mFragment);
+        transaction.commit();
+        mFragment = null;
+    }
+
+    private void startAutoClose() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                closeMessage();
+            }
+        }, MESSAGE_SHOW_DELAY);
+    }
+
 
     private void tellUser(String string) {
         Toast.makeText(getApplicationContext(), string, Toast.LENGTH_SHORT).show();
