@@ -1,27 +1,16 @@
 package lol.graunephar.android.nfc;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.Ndef;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -39,7 +28,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     PendingIntent pendingIntent;
     private NFCReader mReader;
     private android.support.v4.app.FragmentManager mManager;
-    private long MESSAGE_SHOW_DELAY = 5000;
+    private long MESSAGE_SHOW_DELAY = 7000;
     private MessageFragment mFragment;
 
 
@@ -65,8 +54,14 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if (getIntent().getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-            detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        checkIfTag(intent);
+
+    }
+
+    private void checkIfTag(Intent intent) {
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        if (tag != null) {
+            detectedTag = tag;
             readNFCData();
         }
     }
@@ -74,12 +69,9 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     private void readNFCData() {
         try {
             TagContentMessage message = mReader.readFromTag(getIntent(), detectedTag);
-
             showMessage(message);
-
         } catch (NFCReader.EmptytagException e) {
             tellUser(getString(R.string.empty_tag_messaage));
-
         } catch (NFCReader.NotSupportedContentException e) {
             tellUser(getString(R.string.undopported_tag_message));
         } catch (IOException e) {
@@ -89,30 +81,34 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
     private void showMessage(TagContentMessage message) {
 
-
         if (mManager == null) mManager = getSupportFragmentManager();
 
         android.support.v4.app.FragmentTransaction transaction = mManager.beginTransaction();
 
-        if(mFragment != null) closeMessage();
+        if (mFragment != null) closeMessage();
 
-        mFragment = new MessageFragment();
-        mFragment.setCloser(this);
-        transaction.add(R.id.fragment_layout, mFragment);
-        transaction.commit();
-        startAutoClose();
+        if (mFragment == null) {
+            mFragment = new MessageFragment();
+            mFragment.setCloser(this);
+            mFragment.addContent(message);
+            transaction.add(R.id.fragment_layout, mFragment);
+            transaction.commit();
+            startAutoClose();
+        }
 
     }
 
 
     @Override
     public void closeMessage() {
-        Log.d(TAG, "CLosing fragment");
-        if (mManager == null) mManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = mManager.beginTransaction();
-        transaction.remove(mFragment);
-        transaction.commit();
-        mFragment = null;
+        if (mFragment != null) {
+            Log.d(TAG, "CLosing fragment");
+            if (mManager == null) mManager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction transaction = mManager.beginTransaction();
+            transaction.remove(mFragment);
+            transaction.commit();
+            mFragment = null;
+        }
     }
 
     private void startAutoClose() {
@@ -132,8 +128,18 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
     @Override
     protected void onResume() {
-
         super.onResume();
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, readTagFilters, null);
+
+        //checkIfTag(getIntent());
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkIfTag(getIntent());
+    }
+
+
+
 }

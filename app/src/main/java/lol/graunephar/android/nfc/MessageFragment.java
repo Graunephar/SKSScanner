@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import lol.graunephar.android.nfc.models.TagContentMessage;
 
 
 public class MessageFragment extends Fragment {
@@ -24,6 +25,10 @@ public class MessageFragment extends Fragment {
     private MessageCloser mCloser;
     private Button exitBtn;
     private TextView headlineText;
+    private TagContentMessage mContent;
+    private TextView nameTxt;
+    private TextView descriptionTxt;
+    private TextView pointTxt;
 
     public void setCloser(MessageCloser closer) {
         this.mCloser = closer;
@@ -51,10 +56,18 @@ public class MessageFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        updateUI();
+        setFullscreen(getActivity());
+
+    }
+
+    private void updateUI() {
         exitBtn = getView().findViewById(R.id.exit_message_fragment_btn);
         exitBtn.setText(R.string.exit_button_text);
         headlineText = getView().findViewById(R.id.message_headline_txtView);
         headlineText.setText(getString(R.string.message_headline_text));
+
+        loadFrontContent();
 
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,8 +77,17 @@ public class MessageFragment extends Fragment {
         });
 
         setBackroundColor();
-        setFullscreen(getActivity());
+    }
 
+    private void loadFrontContent() {
+        if(mContent == null) return;
+        nameTxt = getView().findViewById(R.id.message_name_txtView);
+        descriptionTxt = getView().findViewById(R.id.message_description_txtView);
+        pointTxt = getView().findViewById(R.id.message_point_txtView);
+
+        nameTxt.setText(mContent.getName());
+        descriptionTxt.setText(mContent.getFact());
+        //pointTxt.setText(mContent.getPoints());
     }
 
     private void setBackroundColor() {
@@ -104,4 +126,7 @@ public class MessageFragment extends Fragment {
         return android.os.Build.VERSION.SDK_INT >= 19;
     }
 
+    public void addContent(TagContentMessage message) {
+        mContent = message;
+    }
 }
