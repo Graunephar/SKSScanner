@@ -3,4 +3,7 @@
     <string name="reader_unable_read_message">Could not read from tag. Try again.</string>
     <string name="undopported_tag_message">Unknown context</string>
     <string name="empty_tag_messaage">That tag was empty</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,5 +1,9 @@
 package lol.graunephar.android.nfc;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -9,9 +13,12 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +36,7 @@ public class ScanActivity extends AppCompatActivity {
     IntentFilter[] readTagFilters;
     PendingIntent pendingIntent;
     private NFCReader mReader;
+    private android.support.v4.app.FragmentManager mManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +69,9 @@ public class ScanActivity extends AppCompatActivity {
     private void readNFCData() {
         try {
             TagContentMessage message = mReader.readFromTag(getIntent(), detectedTag);
-            tellUser(message.getName());
+
+            showMessage(message);
+
         } catch (NFCReader.EmptytagException e) {
             tellUser(getString(R.string.empty_tag_messaage));
 
@@ -70,6 +80,18 @@ public class ScanActivity extends AppCompatActivity {
         } catch (IOException e) {
             tellUser(getString(R.string.reader_unable_read_message));
         }
+    }
+
+    private void showMessage(TagContentMessage message) {
+
+
+        if (mManager == null) mManager = getSupportFragmentManager();
+
+        android.support.v4.app.FragmentTransaction transaction = mManager.beginTransaction();
+
+        MessageFragment fragment = new MessageFragment();
+        transaction.add(R.id.fragment_layout, fragment);
+        transaction.commit();
 
 
     }
