@@ -37,13 +37,17 @@ public class NFCReader {
 
         Ndef ndef = Ndef.get(tag);
 
-        if(ndef == null) throw new NotSupportedContentException("This is a strange tag");
+        if(ndef == null){
+            ndef.close(); //Always close the connection
+            throw new NotSupportedContentException("This is a strange tag");
+        }
 
         ndef.connect();
 
         Parcelable[] messages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
         if (messages == null) {
+            ndef.close(); //Always close the connection
             Log.d(TAG, "Empty tag");
             throw new EmptytagException("The tag is Empty");
         }
@@ -55,6 +59,7 @@ public class NFCReader {
         return res;
 
     }
+
 
     private TagContentMessage getContent(Parcelable[] messages) throws NotSupportedContentException {
         NdefMessage[] ndefMessages = new NdefMessage[messages.length];
