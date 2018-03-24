@@ -62,30 +62,36 @@ public class NFCReader {
             ndefMessages[i] = (NdefMessage) messages[i];
         }
 
-        if (!checkTag(ndefMessages)) {
+        if (!isThisOurTag(ndefMessages)) {
             Log.d(TAG, "Not our tag");
             throw new NotSupportedContentException("Tag is not out type");
 
         }
 
-        NdefRecord record = ndefMessages[0].getRecords()[1];
+        NdefRecord record = ndefMessages[0].getRecords()[0];
         byte[] payload = record.getPayload();
         String jsonstring = new String(payload);
-        Log.d(TAG, "IS out tag");
+        Log.d(TAG, "IS ourtag");
 
         TagContentMessage res = gson.fromJson(jsonstring, TagContentMessage.class);
 
         return res;
     }
 
-    private boolean checkTag(NdefMessage[] ndefMessages) {
+    private boolean isThisOurTag(NdefMessage[] ndefMessages) {
 
-        NdefRecord type = ndefMessages[0].getRecords()[0];
-        byte[] aar = type.getPayload();
-        String aarcontent = new String(aar);
+        NdefRecord[] records = ndefMessages[0].getRecords();
+
         String packagename = mContext.getPackageName();
+        for (int i = 0; i < records.length; i++) {
 
-        return aarcontent.equals(packagename);
+            NdefRecord type = records[i];
+            byte[] aar = type.getPayload();
+            String aarcontent = new String(aar);
+            if (aarcontent.equals((packagename))) return true;
+        }
+
+        return false;
     }
 
     class NFCReaderException extends IOException {
