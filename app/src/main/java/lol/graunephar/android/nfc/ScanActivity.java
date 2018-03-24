@@ -30,6 +30,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     private android.support.v4.app.FragmentManager mManager;
     private long MESSAGE_SHOW_DELAY = 7000;
     private MessageFragment mFragment;
+    private Handler mHandler;
 
 
     @Override
@@ -112,8 +113,8 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     }
 
     private void startAutoClose() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 closeMessage();
@@ -131,7 +132,14 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         super.onResume();
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, readTagFilters, null);
 
-        //checkIfTag(getIntent());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     @Override
