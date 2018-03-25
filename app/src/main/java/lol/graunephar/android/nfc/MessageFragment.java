@@ -29,6 +29,7 @@ public class MessageFragment extends Fragment {
     private TextView nameTxt;
     private TextView descriptionTxt;
     private TextView pointTxt;
+    private boolean mIsTagNew;
 
     public void setCloser(MessageCloser closer) {
         this.mCloser = closer;
@@ -80,7 +81,7 @@ public class MessageFragment extends Fragment {
     }
 
     private void loadFrontContent() {
-        if(mContent == null) return;
+        if (mContent == null) return;
         nameTxt = getView().findViewById(R.id.message_name_txtView);
         descriptionTxt = getView().findViewById(R.id.message_description_txtView);
         pointTxt = getView().findViewById(R.id.message_point_txtView);
@@ -92,7 +93,11 @@ public class MessageFragment extends Fragment {
     }
 
     private void setBackroundColor() {
-        getView().setBackgroundColor(Color.GREEN);
+        int color;
+        if(mIsTagNew) color = Color.GREEN;
+        else color = Color.RED;
+
+        getView().setBackgroundColor(color);
     }
 
     @Override
@@ -127,7 +132,8 @@ public class MessageFragment extends Fragment {
         return android.os.Build.VERSION.SDK_INT >= 19;
     }
 
-    public void addContent(TagContentMessage message) {
+    public void addContent(TagContentMessage message, boolean istagnew) {
         mContent = message;
+        mIsTagNew = istagnew;
     }
 }

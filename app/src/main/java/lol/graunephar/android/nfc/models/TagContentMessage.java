@@ -39,4 +39,9 @@ public class TagContentMessage {
     public void setPoints(Integer points) {
         this.points = points;
     }
+
+    @Override
+    public int hashCode() {
+        return getFact().hashCode() + getName().hashCode() + getPoints().hashCode();
+    }
 }

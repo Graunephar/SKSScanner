@@ -7,15 +7,6 @@
     android:theme="@style/SKS"
     tools:context="lol.graunephar.android.nfc.ScanActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/scanner_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorAccent"
-        android:elevation="4dp"
-        android:theme="@style/ToolBarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
     <TextView
         android:id="@+id/scan_count_label_txt"
         android:layout_width="wrap_content"

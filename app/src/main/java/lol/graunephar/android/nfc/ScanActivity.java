@@ -11,7 +11,6 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lol.graunephar.android.nfc.collections.MessageMap;
 import lol.graunephar.android.nfc.models.TagContentMessage;
 import lol.graunephar.android.nfc.utilities.nfc.NFCReader;
 
@@ -63,7 +63,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     private int mfound = 0;
     private int mNrOfTags = DEFAULT_TOKEN_NR;
     private int mPoints = 0;
-
+    private MessageMap mMessages;
 
     @BindView(R.id.chart)
     PieChart mChart;
@@ -75,12 +75,15 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     TextView mCountLabelTxt;
 
 
-
-
     //Preferences
     private String KEY_FOUND = "key_found";
     private String KEY_POINTS = "key_points";
     private String KEY_NUMBER_OF_TOKENS = "key_number_of_tokens";
+    private static final String KEY_MESSAGES_MAP = "key_messages_map";
+
+    public ScanActivity() {
+        this.mMessages = new MessageMap();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +113,6 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
         updatePoints(); //Draws labels with numbers
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.scanner_toolbar);
-        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -135,10 +136,12 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUESTCODE_SETTINGS) {
+        if (requestCode == REQUESTCODE_SETTINGS) {
             int number = data.getIntExtra(SETTINGS_KEY_NUM, 80);
-            
+
+            mNrOfTags = number;
             writeToSharedPreferences(number);
+            updatePoints();
         }
     }
 
@@ -195,13 +198,19 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+    }
+
+    private void saveStatsToPreferences() {
+
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(KEY_POINTS, mPoints);
         editor.putInt(KEY_FOUND, mfound);
+        editor.putString(KEY_MESSAGES_MAP, mMessages.toJson());
         editor.commit();
 
     }
+
 
     private void updateChartData() {
 
@@ -236,7 +245,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
         ArrayList<PieEntry> entries = new ArrayList<>();
 
-        int alltags = 100;
+        int alltags = mNrOfTags;
         int found = mfound;
         int notfound;
         if (found > alltags) {
@@ -259,6 +268,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        loadFromPreferences();
         checkIfTag(intent);
 
     }
@@ -274,7 +284,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     private void readNFCData() {
         try {
             TagContentMessage message = mReader.readFromTag(getIntent(), detectedTag);
-            showMessage(message);
+            checkSaveAndShow(message);
         } catch (NFCReader.EmptytagException e) {
             tellUser(getString(R.string.empty_tag_messaage));
         } catch (NFCReader.NotSupportedContentException e) {
@@ -284,9 +294,18 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         }
     }
 
-    private void showMessage(TagContentMessage message) {
+    private void checkSaveAndShow(TagContentMessage message) {
+        if(!mMessages.contains(message)) {
+            mMessages.add(message);
+            updateStats(message);
+            showMessage(message, true);
+        } else {
+            showMessage(message, false);
+        }
 
-        updateStats(message);
+    }
+
+    private void showMessage(TagContentMessage message, boolean newtag) {
         mChart.setVisibility(View.INVISIBLE);
 
         if (mManager == null) mManager = getSupportFragmentManager();
@@ -298,7 +317,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         if (mFragment == null) {
             mFragment = new MessageFragment();
             mFragment.setCloser(this);
-            mFragment.addContent(message);
+            mFragment.addContent(message, newtag);
             transaction.add(R.id.fragment_layout, mFragment);
             transaction.commit();
             startAutoClose();
@@ -368,6 +387,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
+        saveStatsToPreferences();
     }
 
     @Override
@@ -383,7 +403,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         mPointTxt.setText(points);
 
         String found = String.valueOf(mfound);
-        String countres = getString(R.string.counnt_text) + " " + found + " " + getString(R.string.tags);
+        String countres = getString(R.string.counnt_text) + " " + found + " " + getString(R.string.tags) + " " +  getString(R.string.tokens_of_text) + " " + mNrOfTags;
         mCountLabelTxt.setText(countres);
 
         updateChartData();
@@ -395,9 +415,9 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         mfound = sharedPref.getInt(KEY_FOUND, 0);
         mPoints = sharedPref.getInt(KEY_POINTS, 0);
         mNrOfTags = sharedPref.getInt(KEY_NUMBER_OF_TOKENS, DEFAULT_TOKEN_NR);
-        
+        String messages = sharedPref.getString(KEY_MESSAGES_MAP, "{}");
+        mMessages = new MessageMap(messages);
         updatePoints();
-
     }
 
 
