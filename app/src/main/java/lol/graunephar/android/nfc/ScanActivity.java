@@ -11,7 +11,11 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +37,14 @@ import butterknife.ButterKnife;
 import lol.graunephar.android.nfc.models.TagContentMessage;
 import lol.graunephar.android.nfc.utilities.nfc.NFCReader;
 
+import static lol.graunephar.android.nfc.SettingsActivity.SETTINGS_KEY_NUM;
+
 
 public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
     private static final String TAG = ScanActivity.class.toString();
+    private static final int REQUESTCODE_SETTINGS = 4557;
+    private static final int DEFAULT_TOKEN_NR = 80;
 
     //NFC
     Tag detectedTag;
@@ -53,7 +61,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
 
     //Data
     private int mfound = 0;
-    private int mNrOfTags = 0;
+    private int mNrOfTags = DEFAULT_TOKEN_NR;
     private int mPoints = 0;
 
 
@@ -72,6 +80,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     //Preferences
     private String KEY_FOUND = "key_found";
     private String KEY_POINTS = "key_points";
+    private String KEY_NUMBER_OF_TOKENS = "key_number_of_tokens";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +109,44 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         mPointLabelTxt.setText(R.string.point_text);
 
         updatePoints(); //Draws labels with numbers
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.scanner_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(intent, REQUESTCODE_SETTINGS);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUESTCODE_SETTINGS) {
+            int number = data.getIntExtra(SETTINGS_KEY_NUM, 80);
+            
+            writeToSharedPreferences(number);
+        }
+    }
+
+    private void writeToSharedPreferences(int number) {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(KEY_NUMBER_OF_TOKENS, number);
+        editor.commit();
     }
 
     private void drawChart() {
@@ -347,7 +394,8 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         mfound = sharedPref.getInt(KEY_FOUND, 0);
         mPoints = sharedPref.getInt(KEY_POINTS, 0);
-
+        mNrOfTags = sharedPref.getInt(KEY_NUMBER_OF_TOKENS, DEFAULT_TOKEN_NR);
+        
         updatePoints();
 
     }

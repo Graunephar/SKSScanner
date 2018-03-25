@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="lol.graunephar.android.nfc">
+
     <!-- Register NFC -->
     <uses-permission android:name="android.permission.NFC" />
 
@@ -33,9 +34,7 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

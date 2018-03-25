@@ -1,11 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">#ff7b00</item>
     </style>
 
     <style name="SKS" parent="AppTheme" >
@@ -13,5 +13,12 @@
         <item name="colorPrimary">@android:color/holo_orange_dark</item>
         <item name="colorPrimaryDark">@android:color/holo_orange_dark</item>
     </style>
+
+    <!-- ToolBar -->
+    <style name="ToolBarStyle" parent="SKS">
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColorSecondary">#ffffff</item>
+    </style>
+
 
 </resources>
