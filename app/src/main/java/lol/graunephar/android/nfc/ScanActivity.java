@@ -172,26 +172,14 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
         mChart.setDrawCenterText(true);
 
         mChart.setRotationAngle(0);
+
         // enable rotation of the chart by touch
         mChart.setRotationEnabled(true);
-        mChart.setHighlightPerTapEnabled(true);
-
-        // mChart.setUnit(" €");
-        // mChart.setDrawUnitsInChart(true);
-
-        // add a selection listener
-        //mChart.setOnChartValueSelectedListener(this);
 
         updateChartData();
 
         mChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
-        // mChart.spin(2000, 0, 360);
 
-
-        // entry label styling
-        //mChart.setEntryLabelColor(Color.WHITE);
-        //mChart.setEntryLabelTypeface(mTfRegular);
-        //mChart.setEntryLabelTextSize(12f);
     }
 
     @Override
