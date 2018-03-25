@@ -87,7 +87,8 @@ public class MessageFragment extends Fragment {
 
         nameTxt.setText(mContent.getName());
         descriptionTxt.setText(mContent.getFact());
-        //pointTxt.setText(mContent.getPoints());
+        String points = String.valueOf(mContent.getPoints());
+        pointTxt.setText(points);
     }
 
     private void setBackroundColor() {
