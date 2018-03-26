@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nature Tech - Scanner</string>
+    <string name="reader_unable_read_message">Kunne ikke læse fra tag</string>
+    <string name="undopported_tag_message">Ukendt indhold</string>
+    <string name="empty_tag_messaage">Det tag var tomt</string>
+    <string name="hello_blank_fragment">Hej Blanke fragment</string>
+    <string name="exit_button_text">Tilbage</string>
+    <string name="message_headline_text">TIllykke du har fundet:</string>
+    <string name="found_label">Fundet</string>
+    <string name="not_found_label">Ikke fundet</string>
+    <string name="point_text">Point</string>
+    <string name="counnt_text">Fundet</string>
+    <string name="tags">tags</string>
+    <string name="title_activity_settings">Indtillinger</string>
+    <string name="settings_number_of_tokens">Antal tags i spil</string>
+    <string name="settings_save_button_text">Gem</string>
+    <string name="tokens_of_text">ud af</string>
+    <string name="action_settings">Indstillinger</string>
+</resources>
