@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Medarbejder Skanner</string>
+    <string name="app_name">Nature Tech - Scanner</string>
     <string name="reader_unable_read_message">Could not read from tag. Try again.</string>
     <string name="undopported_tag_message">Unknown context</string>
     <string name="empty_tag_messaage">That tag was empty</string>
