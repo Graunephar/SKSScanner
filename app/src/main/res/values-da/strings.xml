@@ -6,7 +6,7 @@
     <string name="empty_tag_messaage">Det tag var tomt</string>
     <string name="hello_blank_fragment">Hej Blanke fragment</string>
     <string name="exit_button_text">Tilbage</string>
-    <string name="message_headline_text">TIllykke du har fundet:</string>
+    <string name="message_headline_text">Tillykke du har fundet</string>
     <string name="found_label">Fundet</string>
     <string name="not_found_label">Ikke fundet</string>
     <string name="point_text">Point</string>
@@ -17,4 +17,5 @@
     <string name="settings_save_button_text">Gem</string>
     <string name="tokens_of_text">ud af</string>
     <string name="action_settings">Indstillinger</string>
+    <string name="message_headline_again_text">Du har igen fundet</string>
 </resources>

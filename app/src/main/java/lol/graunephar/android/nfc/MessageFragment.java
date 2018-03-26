@@ -66,8 +66,12 @@ public class MessageFragment extends Fragment {
         exitBtn = getView().findViewById(R.id.exit_message_fragment_btn);
         exitBtn.setText(R.string.exit_button_text);
         headlineText = getView().findViewById(R.id.message_headline_txtView);
-        headlineText.setText(getString(R.string.message_headline_text));
 
+        if(mIsTagNew) {
+            headlineText.setText(getString(R.string.message_headline_text));
+        } else {
+            headlineText.setText(getString(R.string.message_headline_again_text));
+        }
         loadFrontContent();
 
         exitBtn.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +93,7 @@ public class MessageFragment extends Fragment {
         nameTxt.setText(mContent.getName());
         descriptionTxt.setText(mContent.getFact());
         String points = String.valueOf(mContent.getPoints());
-        pointTxt.setText(points);
+        pointTxt.setText(points + " " + getString(R.string.point_text));
     }
 
     private void setBackroundColor() {
