@@ -27,12 +27,8 @@ public class MessageMap {
 
     public boolean add(TagContentMessage message) {
         int hash = message.hashCode();
-        if(!messages.containsKey(hash)) {
             this.messages.put(hash, message);
             return true;
-        } else {
-            return false;
-        }
     }
 
     public String toJson() {

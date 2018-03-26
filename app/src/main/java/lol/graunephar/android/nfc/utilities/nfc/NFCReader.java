@@ -38,7 +38,7 @@ public class NFCReader {
         Ndef ndef = Ndef.get(tag);
 
         if(ndef == null){
-            ndef.close(); //Always close the connection
+            //As ndef is null, this is the only place were we fo not have to close the connection
             throw new NotSupportedContentException("This is a strange tag");
         }
 

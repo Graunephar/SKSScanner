@@ -33,10 +33,10 @@
     <TextView
         android:id="@+id/message_description_txtView"
         android:layout_width="341dp"
-        android:layout_height="206dp"
+        android:layout_height="140dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="56dp"
         android:text="TextView"
         android:textColor="@android:color/white"
         android:textSize="30sp"

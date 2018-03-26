@@ -282,7 +282,6 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     }
 
     private void checkSaveAndShow(TagContentMessage message) {
-        loadFromPreferences();
         if(!mMessages.contains(message)) {
             mMessages.add(message);
             updateStats(message);
@@ -381,8 +380,9 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     @Override
     protected void onStart() {
         super.onStart();
-        checkIfTag(getIntent());
         loadFromPreferences();
+        checkIfTag(getIntent());
+
     }
 
     private void updatePoints() {
