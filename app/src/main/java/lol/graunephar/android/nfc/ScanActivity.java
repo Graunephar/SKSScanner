@@ -79,7 +79,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
     private String KEY_FOUND = "key_found";
     private String KEY_POINTS = "key_points";
     private String KEY_NUMBER_OF_TOKENS = "key_number_of_tokens";
-    private static final String KEY_MESSAGES_MAP = "key_messages_map";
+    public static final String KEY_MESSAGES_MAP = "key_messages_map";
 
     public ScanActivity() {
         this.mMessages = new MessageMap();
@@ -132,6 +132,7 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
                 return true;
             case R.id.action_list:
                 Intent listintent = new Intent(this, ListFoundActivity.class);
+                listintent.putExtra(KEY_MESSAGES_MAP, mMessages.toJson());
                 startActivity(listintent);
                 return true;
             default:
