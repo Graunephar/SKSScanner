@@ -18,4 +18,6 @@
     <string name="tokens_of_text">ud af</string>
     <string name="action_settings">Indstillinger</string>
     <string name="message_headline_again_text">Du har igen fundet</string>
+    <string name="action_list">Vis fundne</string>
+
 </resources>

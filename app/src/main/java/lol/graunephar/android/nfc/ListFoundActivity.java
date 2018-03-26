@@ -28,24 +28,8 @@ public class ListFoundActivity extends ListActivity {
         MessageMap map = new MessageMap(json); //Get mao from json parsed in intent
         ArrayList<TagContentMessage> messages = map.toList(); // Convert map to list
 
-        ArrayList<String> names = new ArrayList<>(); //Get names from list and put in new list
-        for(TagContentMessage message: messages) {
-            names.add(message.getName());
-        }
+        MessageListAdapter adapter = new MessageListAdapter(this, map);
 
-        String[] content = new String[names.size()]; //Convert name list to array
-        content = names.toArray(content);
-
-        //SHOW all the stuff
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, content);
         setListAdapter(adapter);
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        String item = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
     }
 }
