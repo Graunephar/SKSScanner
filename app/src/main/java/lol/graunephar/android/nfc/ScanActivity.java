@@ -130,6 +130,10 @@ public class ScanActivity extends AppCompatActivity implements MessageCloser {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivityForResult(intent, REQUESTCODE_SETTINGS);
                 return true;
+            case R.id.action_list:
+                Intent listintent = new Intent(this, ListFoundActivity.class);
+                startActivity(listintent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
